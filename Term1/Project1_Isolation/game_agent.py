@@ -170,6 +170,58 @@ class MinimaxPlayer(IsolationPlayer):
         # Return the best move from the last completed search iteration
         return best_move
 
+    def max_value(self, node, depth):
+        """
+        Determine max value of this node by recursively going through the whole tree
+        :param node: the node to search from
+        :param depth: the maximum depth to search to from this node
+        :return: the maximum value that can be obtained from this node as measured by the evaluation function (self.score)
+        """
+        if self.time_left() < self.TIMER_THRESHOLD:
+            raise SearchTimeout()
+
+        # check to see if we are done
+        end_val = node.utility(self)
+        if end_val != 0:
+            return end_val
+        if depth == 0:
+            return self.score(node, self)
+        # get all possible next moves
+        next_moves = node.get_legal_moves()
+        max_val = float("-inf")
+        for next_move in next_moves:
+            next_node = node.forecast_move(next_move)
+            val = self.min_value(next_node, depth-1)
+            if val > max_val:
+                max_val = val
+        return max_val
+
+    def min_value(self, node, depth):
+        """
+        Determine min value of this node by recursively going through the whole tree
+        :param node: the node to search from
+        :param depth: the minimum depth to search to from this node
+        :return: the minimum value that can be obtained from this node as measured by the evaluation function (self.score)
+        """
+        if self.time_left() < self.TIMER_THRESHOLD:
+            raise SearchTimeout()
+
+        # check to see if we are done
+        end_val = node.utility(self)
+        if end_val != 0:
+            return end_val
+        if depth == 0:
+            return self.score(node, self)
+        # get all possible next moves
+        next_moves = node.get_legal_moves()
+        min_val = float("inf")
+        for next_move in next_moves:
+            next_node = node.forecast_move(next_move)
+            val = self.max_value(next_node, depth - 1)
+            if val < min_val:
+                min_val = val
+        return min_val
+
     def minimax(self, game, depth):
         """Implement depth-limited minimax search algorithm as described in
         the lectures.
@@ -212,8 +264,21 @@ class MinimaxPlayer(IsolationPlayer):
         if self.time_left() < self.TIMER_THRESHOLD:
             raise SearchTimeout()
 
-        # TODO: finish this function!
-        raise NotImplementedError
+        # check to see if we are done
+        legal_moves = game.get_legal_moves()
+        if not legal_moves:
+            return -1, -1
+        if depth == 0:
+            return self.score(game, self)
+        max_val = float("-inf")
+        best_move = legal_moves[0] # just to initialise to valid move
+        for next_move in legal_moves:
+            next_node = game.forecast_move(next_move)
+            val = self.min_value(next_node, depth - 1)
+            if val > max_val:
+                max_val = val
+                best_move = next_move
+        return best_move
 
 
 class AlphaBetaPlayer(IsolationPlayer):
