@@ -18,7 +18,7 @@ class IsolationTest(unittest.TestCase):
     def setUp(self):
         reload(game_agent)
         self.player1 = sample_players.GreedyPlayer()
-        self.player2 = game_agent.MinimaxPlayer(score_fn=sample_players.open_move_score)
+        self.player2 = game_agent.AlphaBetaPlayer(score_fn=sample_players.open_move_score, timeout=20)
         self.game = isolation.Board(self.player1, self.player2)
 
     def test_minimax(self):
@@ -27,6 +27,7 @@ class IsolationTest(unittest.TestCase):
         print("\nWinner: {}\nOutcome: {}".format(winner, outcome))
         print(self.game.to_string())
         print("Move history:\n{!s}".format(history))
+        assert winner == self.player2
 
 
 if __name__ == '__main__':

@@ -118,7 +118,6 @@ class IsolationPlayer:
         self.time_left = None
         self.TIMER_THRESHOLD = timeout
 
-
 class MinimaxPlayer(IsolationPlayer):
     """Game-playing agent that chooses a move using depth-limited minimax
     search. You must finish and test this player to make sure it properly uses
@@ -184,7 +183,7 @@ class MinimaxPlayer(IsolationPlayer):
         end_val = node.utility(self)
         if end_val != 0:
             return end_val
-        if depth == 0:
+        if depth <= 0:
             return self.score(node, self)
         # get all possible next moves
         next_moves = node.get_legal_moves()
@@ -210,7 +209,7 @@ class MinimaxPlayer(IsolationPlayer):
         end_val = node.utility(self)
         if end_val != 0:
             return end_val
-        if depth == 0:
+        if depth <= 0:
             return self.score(node, self)
         # get all possible next moves
         next_moves = node.get_legal_moves()
@@ -268,8 +267,6 @@ class MinimaxPlayer(IsolationPlayer):
         legal_moves = game.get_legal_moves()
         if not legal_moves:
             return -1, -1
-        if depth == 0:
-            return self.score(game, self)
         max_val = float("-inf")
         best_move = legal_moves[0] # just to initialise to valid move
         for next_move in legal_moves:
@@ -319,8 +316,71 @@ class AlphaBetaPlayer(IsolationPlayer):
         """
         self.time_left = time_left
 
-        # TODO: finish this function!
-        raise NotImplementedError
+        # Initialize the best move so that this function returns something
+        # in case the search fails due to timeout
+        best_move = (-1, -1)
+        print(game.to_string())
+        i = 1
+        while True:
+            try:
+                # The try/except block will automatically catch the exception
+                # raised when the timer is about to expire.
+                best_move = self.alphabeta(game, i)
+                i += 1
+                print("Best move ={} at depth={}".format(best_move, i))
+
+            except SearchTimeout:
+                print("Timeout! Best move ={} at depth={}".format(best_move, i))
+                return best_move # Handle any actions required after timeout as needed
+
+        # Return the best move from the last completed search iteration
+        # return best_move
+
+    def min_max_value(self, node, depth, alpha, beta, maximising=True):
+        """
+        Determine min or max value of this node by recursively going through the whole tree
+        also perform the alpha-beta pruning step to minimise search time
+        :param beta: Beta limits the upper bound of search on maximizing layers
+        :param alpha: Alpha limits the lower bound of search on minimizing layers
+        :param maximising: True if this is a maximising node, False if it should minimise
+        :param node: the node to search from
+        :param depth: the minimum depth to search to from this node
+        :return: the minimum value that can be obtained from this node as measured by the evaluation function (self.score)
+        """
+        if self.time_left() < self.TIMER_THRESHOLD:
+            raise SearchTimeout()
+
+        # debug
+        #print("depth={:4<d} alpha={:4f} beta={:4f}".format(depth, alpha, beta))
+
+        # check to see if we are done
+        if depth == 0:
+            return self.score(node, self)
+        end_val = node.utility(self)
+        if end_val != 0:
+            return end_val
+        # get all possible next moves
+        next_moves = node.get_legal_moves()
+        term_val = float("-inf") if maximising else float("inf")
+        for next_move in next_moves:
+            next_node = node.forecast_move(next_move)
+            val = self.min_max_value(next_node, depth - 1, alpha, beta, False) if maximising \
+                else self.min_max_value(next_node, depth - 1, alpha, beta, True)
+            if (maximising and val > term_val) or val < term_val:
+                term_val = val
+            if maximising:
+                alpha = max(alpha, term_val)
+                if term_val >= beta:
+                    # debug
+                    #print("pruned v > beta --> depth={:<4d} alpha={:4f} beta={:4f}".format(depth, alpha, beta))
+                    return term_val
+            else:
+                beta = min(beta, term_val)
+                if term_val <= alpha:
+                    # debug
+                    #print("pruned v < alpha --> depth={:<4d} alpha={:4f} beta={:4f}".format(depth, alpha, beta))
+                    return term_val
+        return term_val
 
     def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf")):
         """Implement depth-limited minimax search with alpha-beta pruning as
@@ -370,5 +430,23 @@ class AlphaBetaPlayer(IsolationPlayer):
         if self.time_left() < self.TIMER_THRESHOLD:
             raise SearchTimeout()
 
-        # TODO: finish this function!
-        raise NotImplementedError
+        # check to see if we are done
+        if game.utility(self) != 0:
+            return -1, -1
+        # get all possible next moves
+        next_moves = game.get_legal_moves()
+        best_move = next_moves[0]  # just to initialise to valid move
+        max_val = float("-inf")
+        for next_move in next_moves:
+            next_node = game.forecast_move(next_move)
+            val = self.min_max_value(next_node, depth - 1, alpha, beta, False)
+            if val > max_val:
+                max_val = val
+                best_move = next_move
+            alpha = max(alpha, max_val)
+            if max_val >= beta:  # this only happens when a sure win situation was found (beta is always inf)
+                print("best score={}".format(max_val))
+                return best_move
+        print("best score={}".format(max_val))
+        return best_move
+
