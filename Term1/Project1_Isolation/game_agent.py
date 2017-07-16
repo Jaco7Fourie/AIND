@@ -118,6 +118,7 @@ class IsolationPlayer:
         self.time_left = None
         self.TIMER_THRESHOLD = timeout
 
+
 class MinimaxPlayer(IsolationPlayer):
     """Game-playing agent that chooses a move using depth-limited minimax
     search. You must finish and test this player to make sure it properly uses
@@ -319,18 +320,18 @@ class AlphaBetaPlayer(IsolationPlayer):
         # Initialize the best move so that this function returns something
         # in case the search fails due to timeout
         best_move = (-1, -1)
-        print(game.to_string())
+        # print(game.to_string())
         i = 1
         while True:
             try:
                 # The try/except block will automatically catch the exception
                 # raised when the timer is about to expire.
                 best_move = self.alphabeta(game, i)
+                # print("Best move ={} at depth={}".format(best_move, i))
                 i += 1
-                print("Best move ={} at depth={}".format(best_move, i))
 
             except SearchTimeout:
-                print("Timeout! Best move ={} at depth={}".format(best_move, i))
+                # print("Timeout! Best move ={} at depth={}".format(best_move, i-1))
                 return best_move # Handle any actions required after timeout as needed
 
         # Return the best move from the last completed search iteration
@@ -354,31 +355,29 @@ class AlphaBetaPlayer(IsolationPlayer):
         #print("depth={:4<d} alpha={:4f} beta={:4f}".format(depth, alpha, beta))
 
         # check to see if we are done
-        if depth == 0:
-            return self.score(node, self)
-        end_val = node.utility(self)
-        if end_val != 0:
-            return end_val
         # get all possible next moves
         next_moves = node.get_legal_moves()
+        if depth == 0 or not node.get_legal_moves():
+            return self.score(node, self)
+
         term_val = float("-inf") if maximising else float("inf")
         for next_move in next_moves:
             next_node = node.forecast_move(next_move)
             val = self.min_max_value(next_node, depth - 1, alpha, beta, False) if maximising \
                 else self.min_max_value(next_node, depth - 1, alpha, beta, True)
-            if (maximising and val > term_val) or val < term_val:
+            if (maximising and val > term_val) or (not maximising and val < term_val):
                 term_val = val
             if maximising:
                 alpha = max(alpha, term_val)
                 if term_val >= beta:
                     # debug
-                    #print("pruned v > beta --> depth={:<4d} alpha={:4f} beta={:4f}".format(depth, alpha, beta))
+                    # print("pruned v > beta --> depth={:<4d} alpha={:4f} beta={:4f}".format(depth, alpha, beta))
                     return term_val
             else:
                 beta = min(beta, term_val)
                 if term_val <= alpha:
                     # debug
-                    #print("pruned v < alpha --> depth={:<4d} alpha={:4f} beta={:4f}".format(depth, alpha, beta))
+                    # print("pruned v < alpha --> depth={:<4d} alpha={:4f} beta={:4f}".format(depth, alpha, beta))
                     return term_val
         return term_val
 
@@ -445,8 +444,7 @@ class AlphaBetaPlayer(IsolationPlayer):
                 best_move = next_move
             alpha = max(alpha, max_val)
             if max_val >= beta:  # this only happens when a sure win situation was found (beta is always inf)
-                print("best score={}".format(max_val))
                 return best_move
-        print("best score={}".format(max_val))
+        # print("best score={}".format(max_val))
         return best_move
 
