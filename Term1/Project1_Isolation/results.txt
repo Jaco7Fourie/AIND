@@ -1,0 +1,63 @@
+
+                        *************************
+                             Playing Matches
+                        *************************
+
+ Match #   Opponent    AB_Improved   AB_Custom   AB_Custom_2  AB_Custom_3
+                        Won | Lost   Won | Lost   Won | Lost   Won | Lost
+    1       Random      40  |   0    35  |   5    38  |   2    33  |   7
+    2       MM_Open     31  |   9    29  |  11    30  |  10    28  |  12
+    3      MM_Center    36  |   4    37  |   3    39  |   1    36  |   4
+    4     MM_Improved   29  |  11    29  |  11    29  |  11    30  |  10
+    5       AB_Open     23  |  17    18  |  22    22  |  18    25  |  15
+    6      AB_Center    26  |  14    23  |  17    22  |  18    21  |  19
+    7     AB_Improved   24  |  16    24  |  16    20  |  20    18  |  22
+--------------------------------------------------------------------------
+           Win Rate:      74.6%        69.6%        71.4%        68.2%
+
+There were 2.0 timeouts during the tournament -- make sure your agent handles search timeout correctly, and consider increasing the timeout margin for your agent.
+
+
+Process finished with exit code 0
+
+
+                        *************************
+                             Playing Matches
+                        *************************
+
+ Match #   Opponent    AB_Improved   AB_Custom   AB_Custom_2  AB_Custom_3
+                        Won | Lost   Won | Lost   Won | Lost   Won | Lost
+    1       AB_Open     20  |  20    21  |  19    20  |  20    21  |  19
+    2      AB_Center    23  |  17    21  |  19    23  |  17    18  |  22
+    3     AB_Improved   21  |  19    21  |  19    15  |  25    20  |  20
+--------------------------------------------------------------------------
+           Win Rate:      53.3%        52.5%        48.3%        49.2%
+
+Process finished with exit code 0
+
+                        *************************
+                             Playing Matches
+                        *************************
+
+ Match #   Opponent    AB_Improved   AB_Custom   AB_Custom_2  AB_Custom_3
+                        Won | Lost   Won | Lost   Won | Lost   Won | Lost
+    1       AB_Open     22  |  18    17  |  23    24  |  16    20  |  20
+    2      AB_Center    26  |  14    21  |  19    14  |  26    21  |  19
+    3     AB_Improved   16  |  24    20  |  20    23  |  17    16  |  24
+--------------------------------------------------------------------------
+           Win Rate:      53.3%        48.3%        50.8%        47.5%
+
+
+                        *************************
+                             Playing Matches
+                        *************************
+
+ Match #   Opponent    AB_Improved   AB_Custom   AB_Custom_2  AB_Custom_3
+                        Won | Lost   Won | Lost   Won | Lost   Won | Lost
+    1       AB_Open     47  |  33    44  |  36    42  |  38    40  |  40
+    2      AB_Center    51  |  29    48  |  32    39  |  41    41  |  39
+    3     AB_Improved   42  |  38    40  |  40    37  |  43    35  |  45
+--------------------------------------------------------------------------
+           Win Rate:      58.3%        55.0%        49.2%        48.3%
+
+Process finished with exit code 0

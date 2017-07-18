@@ -14,6 +14,9 @@ def custom_score(game, player):
     """Calculate the heuristic value of a game state from the point of view
     of the given player.
 
+    Having noticed that the best heuristic 'improved_score' often fails against the 'open_score' heuristic by
+    ending up in a corner this heuristic tries to improve on 'improved_score' by adding a penalty to corners
+
     This should be the best heuristic function for your project submission.
 
     Note: this function should be called from within a Player instance as
@@ -34,8 +37,20 @@ def custom_score(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    # TODO: finish this function!
-    raise NotImplementedError
+    PENALTY_AMOUNT = 3
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+
+    own_moves = len(game.get_legal_moves(player))
+    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    current_location = game.get_player_location(player)
+    corner_penalty = PENALTY_AMOUNT if (current_location[0] == 0 and current_location[1] == 0) or \
+                          (current_location[0] == game.height-1 and current_location[1] == game.width-1) \
+        else 0
+    return float(own_moves - 2*opp_moves) - corner_penalty
 
 
 def custom_score_2(game, player):
@@ -44,6 +59,8 @@ def custom_score_2(game, player):
 
     Note: this function should be called from within a Player instance as
     `self.score()` -- you should not need to call this function directly.
+
+    This is 'improved_score' but weighted to limit opponent's moves more
 
     Parameters
     ----------
@@ -60,8 +77,23 @@ def custom_score_2(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    # TODO: finish this function!
-    raise NotImplementedError
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+
+    opponent = game.get_opponent(player)
+    own_moves = len(game.get_legal_moves(player))
+    opp_moves = len(game.get_legal_moves(opponent))
+    current_location1 = game.get_player_location(player)
+    current_location2 = game.get_player_location(opponent)
+    # using the sum-of-absolute-difference (SAD) distance the longest distance two players can be is the sum of the
+    # width and height of the board. Scale our penalty so that it does not dominate the main heuristic
+    SCALING_FACTOR = 2
+    # the sum-of-absolute-difference (SAD) distance between the players
+    distance = abs(current_location1[0] - current_location2[0]) + abs(current_location1[1] - current_location2[1])
+    return float(own_moves - 2*opp_moves) + distance*SCALING_FACTOR
 
 
 def custom_score_3(game, player):
@@ -86,8 +118,19 @@ def custom_score_3(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    # TODO: finish this function!
-    raise NotImplementedError
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+
+    opponent = game.get_opponent(player)
+    own_moves = len(game.get_legal_moves(player))
+    opp_moves = game.get_legal_moves(opponent)
+    current_location = game.get_player_location(player)
+    # if this player is blocking an opponent's move add the bonus score
+    bonus = 3 if current_location in opp_moves else 0
+    return float(own_moves + bonus)
 
 
 class IsolationPlayer:
@@ -112,7 +155,7 @@ class IsolationPlayer:
         positive value large enough to allow the function to return before the
         timer expires.
     """
-    def __init__(self, search_depth=3, score_fn=custom_score, timeout=10.):
+    def __init__(self, search_depth=3, score_fn=custom_score, timeout=15.):
         self.search_depth = search_depth
         self.score = score_fn
         self.time_left = None
@@ -124,6 +167,9 @@ class MinimaxPlayer(IsolationPlayer):
     search. You must finish and test this player to make sure it properly uses
     minimax to return a good move before the search time limit expires.
     """
+
+    def __str__(self):
+        return "MinimaxPlayer: {}".format(self.score.__name__)
 
     def get_move(self, game, time_left):
         """Search for the best move from the available legal moves and return a
@@ -284,6 +330,9 @@ class AlphaBetaPlayer(IsolationPlayer):
     search with alpha-beta pruning. You must finish and test this player to
     make sure it returns a good move before the search time limit expires.
     """
+
+    def __str__(self):
+        return "AlphaBetaPlayer: {}".format(self.score.__name__)
 
     def get_move(self, game, time_left):
         """Search for the best move from the available legal moves and return a
