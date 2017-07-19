@@ -56,7 +56,7 @@ class HeuristicTest2(unittest.TestCase):
     def setUp(self):
         reload(game_agent)
         self.player1 = game_agent.AlphaBetaPlayer(score_fn=sample_players.improved_score, timeout=20)
-        self.player2 = game_agent.AlphaBetaPlayer(score_fn=game_agent.custom_score, timeout=20)
+        self.player2 = game_agent.AlphaBetaPlayer(score_fn=game_agent.custom_score_3, timeout=20)
         self.game = isolation.Board(self.player1, self.player2)
 
     def test_minimax(self):

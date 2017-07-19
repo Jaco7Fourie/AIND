@@ -49,7 +49,7 @@ def custom_score(game, player):
     current_location = game.get_player_location(player)
     corner_penalty = PENALTY_AMOUNT if (current_location[0] == 0 and current_location[1] == 0) or \
                           (current_location[0] == game.height-1 and current_location[1] == game.width-1) \
-        else 0
+                           else 0
     return float(own_moves - 2*opp_moves) - corner_penalty
 
 
@@ -90,7 +90,7 @@ def custom_score_2(game, player):
     current_location2 = game.get_player_location(opponent)
     # using the sum-of-absolute-difference (SAD) distance the longest distance two players can be is the sum of the
     # width and height of the board. Scale our penalty so that it does not dominate the main heuristic
-    SCALING_FACTOR = 2
+    SCALING_FACTOR = 4 # 2
     # the sum-of-absolute-difference (SAD) distance between the players
     distance = abs(current_location1[0] - current_location2[0]) + abs(current_location1[1] - current_location2[1])
     return float(own_moves - 2*opp_moves) + distance*SCALING_FACTOR
@@ -118,6 +118,7 @@ def custom_score_3(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
+    PENALTY_SCALE = 0.5
     if game.is_loser(player):
         return float("-inf")
 
@@ -126,11 +127,11 @@ def custom_score_3(game, player):
 
     opponent = game.get_opponent(player)
     own_moves = len(game.get_legal_moves(player))
-    opp_moves = game.get_legal_moves(opponent)
-    current_location = game.get_player_location(player)
-    # if this player is blocking an opponent's move add the bonus score
-    bonus = 3 if current_location in opp_moves else 0
-    return float(own_moves + bonus)
+    opp_moves = len(game.get_legal_moves(opponent))
+    pw, ph = game.get_player_location(player)
+    w, h = game.width / 2., game.height / 2.
+    distance = abs(w - pw) + abs(h - ph)
+    return float(own_moves - 2*opp_moves) - PENALTY_SCALE*distance
 
 
 class IsolationPlayer:
