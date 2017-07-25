@@ -14,8 +14,9 @@ def custom_score(game, player):
     """Calculate the heuristic value of a game state from the point of view
     of the given player.
 
-    Having noticed that the best heuristic 'improved_score' often fails against the 'open_score' heuristic by
-    ending up in a corner this heuristic tries to improve on 'improved_score' by adding a penalty to corners
+    This heuristic is based on a more aggressive version improved_score.
+    It ads a larger weight to the opponents available moves. Additionally is also adds a penalty that increases
+    as the player moves further away from the centre.
 
     This should be the best heuristic function for your project submission.
 
@@ -37,20 +38,23 @@ def custom_score(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    PENALTY_AMOUNT = 3
+    PENALTY_SCALE = 0.5
     if game.is_loser(player):
         return float("-inf")
 
     if game.is_winner(player):
         return float("inf")
 
+    opponent = game.get_opponent(player)
     own_moves = len(game.get_legal_moves(player))
-    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
-    current_location = game.get_player_location(player)
-    corner_penalty = PENALTY_AMOUNT if (current_location[0] == 0 and current_location[1] == 0) or \
-                          (current_location[0] == game.height-1 and current_location[1] == game.width-1) \
-                           else 0
-    return float(own_moves - 2*opp_moves) - corner_penalty
+    opp_moves = len(game.get_legal_moves(opponent))
+    pw, ph = game.get_player_location(player)
+    w, h = game.width / 2., game.height / 2.
+    # use the Manhattan distance metric for performance reasons.
+    distance = abs(w - pw) + abs(h - ph)
+    return float(own_moves - 2 * opp_moves) - PENALTY_SCALE * distance
+
+
 
 
 def custom_score_2(game, player):
@@ -60,7 +64,9 @@ def custom_score_2(game, player):
     Note: this function should be called from within a Player instance as
     `self.score()` -- you should not need to call this function directly.
 
-    This is 'improved_score' but weighted to limit opponent's moves more
+    This is 'improved_score' but weighted to limit opponent's moves more and play more aggressively.
+    It also uses a distance metric to balance the overly aggressive behaviour of the increased weight by
+    penalising the play as it moves closer to the opponent
 
     Parameters
     ----------
@@ -100,6 +106,9 @@ def custom_score_3(game, player):
     """Calculate the heuristic value of a game state from the point of view
     of the given player.
 
+    Having noticed that the best heuristic 'improved_score' often fails against the 'open_score' heuristic by
+    ending up in a corner this heuristic tries to improve on 'improved_score' by adding a penalty to corners
+
     Note: this function should be called from within a Player instance as
     `self.score()` -- you should not need to call this function directly.
 
@@ -118,20 +127,21 @@ def custom_score_3(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    PENALTY_SCALE = 0.5
+    PENALTY_AMOUNT = 3
     if game.is_loser(player):
         return float("-inf")
 
     if game.is_winner(player):
         return float("inf")
 
-    opponent = game.get_opponent(player)
     own_moves = len(game.get_legal_moves(player))
-    opp_moves = len(game.get_legal_moves(opponent))
-    pw, ph = game.get_player_location(player)
-    w, h = game.width / 2., game.height / 2.
-    distance = abs(w - pw) + abs(h - ph)
-    return float(own_moves - 2*opp_moves) - PENALTY_SCALE*distance
+    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    current_location = game.get_player_location(player)
+    corner_penalty = PENALTY_AMOUNT if (current_location[0] == 0 and current_location[1] == 0) or \
+                                       (
+                                       current_location[0] == game.height - 1 and current_location[1] == game.width - 1) \
+        else 0
+    return float(own_moves - 2 * opp_moves) - corner_penalty
 
 
 class IsolationPlayer:
