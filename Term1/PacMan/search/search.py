@@ -85,10 +85,6 @@ def depthFirstSearch(problem):
   print "Is the start a goal?", problem.isGoalState(problem.getStartState())
   print "Start's successors:", problem.getSuccessors(problem.getStartState())
   """
-    "*** YOUR CODE HERE ***"
-    print "Start:", problem.getStartState()
-    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
 
     state_stack = util.Stack()
     path_stack = util.Stack()
@@ -113,14 +109,42 @@ def breadthFirstSearch(problem):
   Search the shallowest nodes in the search tree first.
   [2nd Edition: p 73, 3rd Edition: p 82]
   """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    state_stack = util.Queue()
+    path_stack = util.Queue()
+    state_stack.push((problem.getStartState(), None, 0))
+    path_stack.push([])
+    while not state_stack.isEmpty():
+        vertex = state_stack.pop()
+        path = path_stack.pop()
+        next_steps = problem.getSuccessors(vertex[0])
+        for v in next_steps:
+            if v[0] not in set([p[0] for p in path]):
+                if problem.isGoalState(v[0]):
+                    return [p[1] for p in path] + [v[1]]
+                else:
+                    state_stack.push(v)
+                    path_stack.push(path+[v])
 
 
 def uniformCostSearch(problem):
     "Search the node of least total cost first. "
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    state_stack = util.PriorityQueue()
+    path_stack = util.PriorityQueue()
+    state_stack.push((problem.getStartState(), None, 0), 0)
+    path_stack.push([], 0)
+    while not state_stack.isEmpty():
+        vertex = state_stack.pop()
+        path = path_stack.pop()
+        next_steps = problem.getSuccessors(vertex[0])
+        for v in next_steps:
+            if v[0] not in set([p[0] for p in path]):
+                if problem.isGoalState(v[0]):
+                    return [p[1] for p in path] + [v[1]]
+                else:
+                    cost = vertex[2] + v[2]
+                    v_costed = (v[0], v[1], cost)
+                    state_stack.push(v_costed, cost)
+                    path_stack.push(path+[v_costed], cost)
 
 
 def nullHeuristic(state, problem=None):
