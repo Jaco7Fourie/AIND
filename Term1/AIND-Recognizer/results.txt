@@ -1,0 +1,64 @@
+SelectorCV, features_delta:
+============================
+**** WER = 0.6179775280898876
+Total correct: 68 out of 178
+
+SelectorBIC, features_delta:
+============================
+**** WER = 0.6179775280898876
+Total correct: 68 out of 178
+
+SelectorDIC, features_delta:
+============================
+**** WER = 0.6292134831460674
+Total correct: 66 out of 178
+
+
+
+SelectorCV, features_polar:
+============================
+**** WER = 0.6067415730337079
+Total correct: 70 out of 178
+
+SelectorBIC, features_polar:
+============================
+**** WER = 0.5449438202247191
+Total correct: 81 out of 178
+
+SelectorDIC, features_polar:
+============================
+**** WER = 0.5449438202247191
+Total correct: 81 out of 178
+
+
+SelectorCV, features_norm:
+============================
+**** WER = 0.6629213483146067
+Total correct: 60 out of 178
+
+SelectorBIC, features_norm:
+============================
+**** WER = 0.6123595505617978
+Total correct: 69 out of 178
+
+SelectorDIC, features_norm:
+============================
+**** WER = 0.5955056179775281
+Total correct: 72 out of 178
+
+
+SelectorCV, features_custom:
+============================
+**** WER = 0.5056179775280899
+Total correct: 88 out of 178
+
+SelectorBIC, features_custom:
+============================
+**** WER = 0.5168539325842697
+Total correct: 86 out of 178
+
+SelectorDIC, features_custom:
+============================
+**** WER = 0.5056179775280899
+Total correct: 88 out of 178
+
